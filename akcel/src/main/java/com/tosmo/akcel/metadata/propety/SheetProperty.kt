@@ -6,7 +6,6 @@ import com.tosmo.akcel.converters.AutoConverter
 import com.tosmo.akcel.converters.Converter
 import com.tosmo.akcel.converters.ConverterKey
 import com.tosmo.akcel.converters.DefaultConverterLoader
-import org.apache.poi.ss.usermodel.Row
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -114,7 +113,7 @@ internal class SheetProperty(val kClass: KClass<*>) {
         /**
          * 为[param]分配读取转换器
          */
-        fun allocConverter(param: KParameter, ktCell: KtCell): Converter<*> {
+        fun allocConverter(param: KParameter, ktCell: KtCell): Converter<*>? {
             return param.findAnnotation<Column>()?.let { anno ->
                 if (anno.readConverter != AutoConverter::class) {
                     anno.readConverter.constructors.find { it.parameters.isEmpty() }.let {
@@ -124,28 +123,10 @@ internal class SheetProperty(val kClass: KClass<*>) {
                 } else null
             } ?: run {
                 val key = ConverterKey[param.type.jvmErasure, ktCell.type]
-                DefaultConverterLoader.defaultReadConverters[key]!!
+                DefaultConverterLoader.defaultReadConverters[key]
             }
         }
     }
-    
-    /**
-     * 从[row]中读取数据并创建对象
-     */
-    fun createBean(row: Row): Any {
-        val info = getSheetInfo(kClass)
-        val args = mutableMapOf<KParameter, Any>()
-        row.forEachIndexed { index, cell ->
-            val param = info.paramsMap[index]!!
-            val ktCell = KtCell(cell, row.rowNum, index)
-            val converter = allocConverter(param, ktCell)
-            val prop = info.contentProperty[param]!!
-            val v = converter.convertToKtData(ktCell, prop)
-            args[param] = if (v is String && autoTrim) v.trim() else v
-        }
-        return info.constructor.callBy(args)!!
-    }
-    
     
     private fun parseContentProp(params: Collection<KParameter>): Map<KParameter, ExcelContentProperty> {
         return buildMap {

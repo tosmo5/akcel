@@ -1,8 +1,11 @@
 package com.tosmo.akcel.adapter
 
 import com.tosmo.akcel.enums.ExcelType
+import com.tosmo.akcel.listener.ReadListener
 import com.tosmo.akcel.metadata.propety.SheetProperty
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.InputStream
@@ -26,6 +29,12 @@ abstract class KtWorkbook(inputStream: InputStream, val type: ExcelType) {
         ExcelType.CSV -> throw UnsupportedOperationException()
     }
     
+    val evaluator = when (type) {
+        ExcelType.XLS -> HSSFFormulaEvaluator(mWorkbook as HSSFWorkbook)
+        ExcelType.XLSX -> XSSFFormulaEvaluator(mWorkbook as XSSFWorkbook)
+        ExcelType.CSV -> TODO()
+    }
+    
     private fun assertHasSheet(kClass: KClass<*>) {
         require(kClass in sheets) { "${kClass}不是${this::class}中的内容" }
     }
@@ -42,19 +51,15 @@ abstract class KtWorkbook(inputStream: InputStream, val type: ExcelType) {
     operator fun <T : Any> get(kClass: KClass<T>): KtSheet<T> {
         assertHasSheet(kClass)
         val prop = SheetProperty.getSheetInfo(kClass)
-        return KtSheet(mWorkbook.getSheet(prop.sheetName), kClass)
+        return KtSheet(this, mWorkbook.getSheet(prop.sheetName), kClass)
     }
     
     operator fun <T : Any> get(kClass: KClass<T>, rowIx: Int): KtRow<T> {
-        assertHasSheet(kClass)
-        val prop = SheetProperty.getSheetInfo(kClass)
-        return KtRow(mWorkbook.getSheet(prop.sheetName).getRow(rowIx), kClass)
+        return KtRow(get(kClass), kClass, rowIx)
     }
     
     operator fun get(kClass: KClass<*>, rowIx: Int, colIx: Int): KtCell {
-        assertHasSheet(kClass)
-        val prop = SheetProperty.getSheetInfo(kClass)
-        return KtCell(mWorkbook.getSheet(prop.sheetName).getRow(rowIx).getCell(colIx), rowIx, colIx)
+        return KtCell(get(kClass, rowIx), colIx)
     }
     
     fun close() {

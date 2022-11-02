@@ -20,6 +20,9 @@ import com.tosmo.akcel.converters.double.DoubleStringConverter
 import com.tosmo.akcel.converters.float.FloatBooleanConverter
 import com.tosmo.akcel.converters.float.FloatNumberConverter
 import com.tosmo.akcel.converters.float.FloatStringConverter
+import com.tosmo.akcel.converters.int.IntBooleanConverter
+import com.tosmo.akcel.converters.int.IntNumberConverter
+import com.tosmo.akcel.converters.int.IntStringConverter
 import com.tosmo.akcel.converters.long.LongBooleanConverter
 import com.tosmo.akcel.converters.long.LongNumberConverter
 import com.tosmo.akcel.converters.long.LongStringConverter
@@ -71,6 +74,9 @@ internal object DefaultConverterLoader {
 //        putAllConverter(IntegerBooleanConverter())
 //        putAllConverter(IntegerNumberConverter())
 //        putAllConverter(IntegerStringConverter())
+        putAllConverter(IntBooleanConverter)
+        putAllConverter(IntNumberConverter)
+        putAllConverter(IntStringConverter)
         putAllConverter(LongBooleanConverter)
         putAllConverter(LongNumberConverter)
         putAllConverter(LongStringConverter)

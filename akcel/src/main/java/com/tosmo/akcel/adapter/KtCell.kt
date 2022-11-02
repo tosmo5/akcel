@@ -2,13 +2,29 @@ package com.tosmo.akcel.adapter
 
 import com.tosmo.akcel.enums.CellDataType
 import com.tosmo.akcel.metadata.DataFormatData
-import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 
-data class KtCell(var cell: Cell, var rowIndex: Int, var colIndex: Int) {
-    val data: Any? = readRawData(cell)
+data class KtCell internal constructor(var ktRow: KtRow<*>, val colIndex: Int) {
     
-    val type: CellDataType = CellDataType.valueOf(cell.cellType)
+    val rowIndex: Int = ktRow.rowIndex
+    
+    internal val cell = ktRow.row.getCell(colIndex) ?: ktRow.row.createCell(colIndex)
+    
+    val data: Any?
+        get() {
+            val value = ktRow.ktSheet.workbook.evaluator.evaluate(cell)
+            return value?.let {
+                when (it.cellType) {
+                    CellType.NUMERIC -> value.numberValue
+                    CellType.STRING -> value.stringValue
+                    CellType.BOOLEAN -> value.booleanValue
+                    CellType.ERROR -> value.errorValue
+                    else -> null
+                }
+            }
+        }
+    
+    val type: CellDataType = CellDataType.valueOf(cell)
     
     /**
      * @see CellDataType.NUMBER
@@ -29,18 +45,16 @@ data class KtCell(var cell: Cell, var rowIndex: Int, var colIndex: Int) {
     val booleaValue: Boolean
         get() = data as Boolean
     
-    var dataFormatData: DataFormatData? = null
-    
-    companion object {
-        fun readRawData(cell: Cell): Any? {
-            return when (cell.cellType) {
-                CellType.NUMERIC -> cell.numericCellValue
-                CellType.STRING -> cell.stringCellValue
-                CellType.FORMULA -> cell.cellFormula
-                CellType.BOOLEAN -> cell.booleanCellValue
-                CellType.ERROR -> cell.errorCellValue
-                else -> null
-            }
+    /**
+     * 公式
+     */
+    var formula: String?
+        get() = if (cell.cellType == CellType.FORMULA) {
+            cell.cellFormula
+        } else null
+        set(value) {
+            cell.cellFormula = value
         }
-    }
+    
+    var dataFormatData: DataFormatData? = null
 }

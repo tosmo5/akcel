@@ -1,5 +1,6 @@
 package com.tosmo.akcel.enums
 
+import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import kotlin.reflect.KClass
 
@@ -21,8 +22,8 @@ enum class CellDataType(var defaultKClass: KClass<*>) {
     RICH_TEXT_STRING(String::class);
     
     companion object {
-        internal fun valueOf(cellType: CellType): CellDataType {
-            return when (cellType) {
+        internal fun valueOf(cell: Cell): CellDataType {
+            return when (cell.cellType) {
                 CellType.NUMERIC -> NUMBER
                 CellType.STRING -> STRING
                 CellType.FORMULA -> STRING
