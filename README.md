@@ -11,7 +11,6 @@ Add it in your root build.gradle at the end of repositories:
 ```groovy
 	allprojects {
 		repositories {
-			...
 			maven { url 'https://jitpack.io' }
 		}
 	}
@@ -21,7 +20,7 @@ Add it in your root build.gradle at the end of repositories:
 
 ```groovy
 	dependencies {
-	        implementation 'com.github.tosmo5:akcel:0.1.1'
+	        implementation 'com.github.tosmo5:akcel:0.1.0'
 	}
 ```
 
@@ -42,7 +41,7 @@ class DemoWorkbook(inputStream: InputStream, type: ExcelType) : KtWorkbook(input
         get() = listOf(SimpleData::class)
 }
 
-val inputStream: InputStream = ...
+val inputStream: InputStream
 DemoWorkbook(inputStream, ExcelType.XLSX).read(SimpleData::class)
 ```
 
