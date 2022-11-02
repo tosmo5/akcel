@@ -1,7 +1,7 @@
-package com.tosmo.android_excel
+package com.tosmo.akcel
 
-import com.tosmo.akcel.enums.ExcelType
 import com.tosmo.akcel.adapter.KtWorkbook
+import com.tosmo.akcel.enums.ExcelType
 import java.io.InputStream
 import kotlin.reflect.KClass
 

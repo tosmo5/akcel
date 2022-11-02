@@ -6,8 +6,6 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.tosmo.akcel.enums.ExcelType
-import com.tosmo.android_excel.DemoWorkbook
-import com.tosmo.android_excel.SimpleData
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
