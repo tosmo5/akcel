@@ -20,7 +20,7 @@ Add it in your root build.gradle at the end of repositories:
 
 ```groovy
 	dependencies {
-	        implementation 'com.github.tosmo5:akcel:0.1.0'
+	        implementation 'com.github.tosmo5:akcel:0.1.1'
 	}
 ```
 
