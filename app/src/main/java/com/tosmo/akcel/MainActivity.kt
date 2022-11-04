@@ -19,7 +19,8 @@ class MainActivity : AppCompatActivity() {
                 Log.d("APP", "读写权限已申请成功")
                 
                 val inputStream = assets.open("2022美蝶对外活动流水.xlsx")
-                SHDealWorkbook(inputStream, ExcelType.XLSX).read(SHDealExcelData::class).forEach {
+                val book = SHDealWorkbook(inputStream, ExcelType.XLSX)
+                book.read(SHDealExcelData::class).forEach {
                     Log.d("APP", it.toString())
                 }
             }

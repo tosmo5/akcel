@@ -22,8 +22,9 @@ enum class CellDataType(var defaultKClass: KClass<*>) {
     RICH_TEXT_STRING(String::class);
     
     companion object {
-        internal fun valueOf(cell: Cell): CellDataType {
-            return when (cell.cellType) {
+        
+        fun valueOf(cellType: CellType): CellDataType {
+            return when (cellType) {
                 CellType.NUMERIC -> NUMBER
                 CellType.STRING -> STRING
                 CellType.FORMULA -> STRING
@@ -31,6 +32,10 @@ enum class CellDataType(var defaultKClass: KClass<*>) {
                 CellType.ERROR -> ERROR
                 else -> EMPTY
             }
+        }
+        
+        fun valueOf(cell: Cell): CellDataType {
+            return valueOf(cell.cellType)
         }
     }
 }

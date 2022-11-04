@@ -1,4 +1,4 @@
-package com.tosmo.akcel.adapter
+package com.tosmo.akcel.proxy
 
 import android.util.Log
 import com.tosmo.akcel.metadata.GlobalConfiguration.autoTrim
@@ -10,11 +10,34 @@ import kotlin.reflect.KParameter
 
 class KtRow<T : Any> internal constructor(
     val ktSheet: KtSheet<T>,
-    val kClass: KClass<T>,
-    val rowIndex: Int,
+    internal val rawRow: Row,
+    val kClass: KClass<T>
 ) {
-    internal val row: Row = ktSheet.sheet.getRow(rowIndex)
     
+    constructor(ktSheet: KtSheet<T>, rowIndex: Int, kClass: KClass<T>) : this(
+        ktSheet, ktSheet.rawSheet.getRow(rowIndex), kClass
+    )
+    
+    /**
+     * 行坐标
+     */
+    var rowIndex: Int
+        get() = rawRow.rowNum
+        set(value) {
+            rawRow.rowNum = value
+        }
+    
+    /**
+     * 整行的单元格样式
+     */
+    var style: KtCellStyle = KtCellStyle(rawRow.rowStyle)
+        set(value) {
+            field.copyFrom(value)
+        }
+    
+    /**
+     * 以[T]返回一行数据
+     */
     @Suppress("UNCHECKED_CAST")
     fun createBean(): T {
         val args = mutableMapOf<KParameter, Any?>()
@@ -46,5 +69,14 @@ class KtRow<T : Any> internal constructor(
     
     operator fun get(colIx: Int): KtCell {
         return KtCell(this, colIx)
+    }
+    
+    fun ktCellIterator(): MutableIterator<KtCell> {
+        return object : MutableIterator<KtCell> {
+            private val iter = rawRow.cellIterator()
+            override fun hasNext(): Boolean = iter.hasNext()
+            override fun next(): KtCell = KtCell(this@KtRow, iter.next())
+            override fun remove() = iter.remove()
+        }
     }
 }

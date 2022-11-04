@@ -4,8 +4,8 @@ import java.io.File
 
 enum class ExcelType {
     XLS,
-    XLSX,
-    CSV;
+    XLSX;
+//    CSV;
     
     companion object {
         fun valueOf(file: File): ExcelType {

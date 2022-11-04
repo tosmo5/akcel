@@ -1,6 +1,6 @@
 package com.tosmo.akcel.converters.string
 
-import com.tosmo.akcel.adapter.KtCell
+import com.tosmo.akcel.proxy.KtCell
 import com.tosmo.akcel.converters.Converter
 import com.tosmo.akcel.enums.CellDataType
 import com.tosmo.akcel.metadata.propety.ExcelContentProperty

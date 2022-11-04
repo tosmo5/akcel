@@ -1,6 +1,6 @@
 package com.tosmo.akcel.metadata.propety
 
-import com.tosmo.akcel.adapter.KtCell
+import com.tosmo.akcel.proxy.KtCell
 import com.tosmo.akcel.annotations.*
 import com.tosmo.akcel.converters.AutoConverter
 import com.tosmo.akcel.converters.Converter
@@ -18,7 +18,7 @@ import kotlin.reflect.jvm.jvmErasure
 /**
  * sheet的信息
  */
-internal class SheetProperty(val kClass: KClass<*>) {
+class SheetProperty(val kClass: KClass<*>) {
     
     /**
      * @see Sheet.name
